@@ -23,69 +23,67 @@ import hdbscan
 # =========================
 
 def inject_global_css():
-    """Apply pastel dashboard theme (background, cards, sidebar)."""
+    """Apply clean light-mode theme with good contrast."""
     st.markdown("""
     <style>
-    /* ---------- GLOBAL BACKGROUND + FONTS ---------- */
+
+    /* ------------------------------------------------------
+       GLOBAL LIGHT BACKGROUND
+    -------------------------------------------------------*/
     html, body, [class*="stApp"] {
-    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-                 "Segoe UI", sans-serif;
-
-    background: linear-gradient(135deg, #1e1f22 0%, #2b2d31 100%);
-
-    background-attachment: fixed;
+        background: #F7F9FB !important;   /* soft light grey-blue */
+        font-family: "Inter", sans-serif;
+        color: #1A1A1A !important;
     }
 
-    h1, h2, h3, h4 {
-        color: #1f2933;
-        font-weight: 700;
-    }
-
-    /* ---------- MAIN CONTENT WIDTH ---------- */
+    /* ------------------------------------------------------
+       MAIN CONTAINER SIZE
+    -------------------------------------------------------*/
     .block-container {
         padding-top: 1.2rem;
         padding-bottom: 3rem;
         max-width: 1180px;
     }
 
-    /* ---------- SIDEBAR ---------- */
+    /* ------------------------------------------------------
+       SIDEBAR
+    -------------------------------------------------------*/
     section[data-testid="stSidebar"] {
-        background: #ffffffdd !important;
-        backdrop-filter: blur(12px);
-        border-right: 1px solid rgba(148, 163, 184, 0.45);
-    }
-    section[data-testid="stSidebar"] > div {
-        padding-top: 1.5rem;
+        background: #FFFFFF !important;
+        border-right: 1px solid #E5E7EB;
     }
 
-    /* Sidebar radio spacing */
-    .stRadio > div {
-        gap: 0.4rem;
-    }
-    .stRadio label {
-        border-radius: 12px;
-        padding: 6px 10px;
+    /* ------------------------------------------------------
+       TITLES (Black)
+    -------------------------------------------------------*/
+    h1, h2, h3, h4, h5, h6 {
+        color: #111 !important;
+        font-weight: 700;
     }
 
-    /* ---------- GENERIC CARDS ---------- */
+    /* ------------------------------------------------------
+       GENERIC CARDS (White + Shadow)
+    -------------------------------------------------------*/
     .app-card {
-        background: #ffffff;
-        border-radius: 20px;
-        padding: 20px 22px;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-        border: 1px solid rgba(226, 232, 240, 0.9);
+        background: #FFFFFF !important;
+        border-radius: 18px;
+        padding: 18px 22px;
+        border: 1px solid #E5E7EB;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         margin-bottom: 18px;
     }
 
+    /* Soft gradient card */
     .app-card-soft {
-        background: linear-gradient(135deg, #ffe5ec, #fff7e6);
-        border-radius: 24px;
+        background: linear-gradient(135deg, #FFF7F3, #F3F7FF) !important;
+        border-radius: 22px;
         padding: 26px 30px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.18);
-        border: none;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+        border: 1px solid #E5E7EB;
         margin-bottom: 18px;
     }
 
+    /* Metrics text */
     .metric-value {
         font-size: 30px;
         font-weight: 700;
@@ -97,14 +95,27 @@ def inject_global_css():
         color: #6b7280;
     }
 
-    /* ---------- HR LINE ---------- */
+    /* ------------------------------------------------------
+       HR LINE
+    -------------------------------------------------------*/
     hr {
         border: none;
-        border-top: 1px solid rgba(209,213,219,0.8);
-        margin: 20px 0;
+        border-top: 1px solid #D1D5DB;
+        margin: 16px 0;
     }
+
+    /* ------------------------------------------------------
+       PLOTLY DARK OVERRIDE FIX (force white background)
+    -------------------------------------------------------*/
+    .js-plotly-plot .plotly, 
+    .plot-container, 
+    svg {
+        background-color: #FFFFFF !important;
+    }
+
     </style>
     """, unsafe_allow_html=True)
+
 
 
 def section_header(title: str, subtitle: str = "", icon: str = "📊"):
