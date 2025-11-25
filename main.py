@@ -16,6 +16,8 @@ from difflib import get_close_matches
 import time
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
+pio.templates.default = 'plotly_white'
 import hdbscan
 
 # =========================
@@ -32,7 +34,8 @@ def inject_global_css():
     -------------------------------------------------------*/
     html, body, [class*="stApp"] {
         background: #F7F9FB !important;   /* soft light grey-blue */
-        font-family: "Inter", sans-serif;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+                     "Segoe UI", sans-serif;
         color: #1A1A1A !important;
     }
 
@@ -52,38 +55,40 @@ def inject_global_css():
         background: #FFFFFF !important;
         border-right: 1px solid #E5E7EB;
     }
+    section[data-testid="stSidebar"] > div {
+        padding-top: 1.5rem;
+    }
 
-    /* ------------------------------------------------------
-       TITLES (Black)
-    -------------------------------------------------------*/
-    h1, h2, h3, h4, h5, h6 {
-        color: #111 !important;
-        font-weight: 700;
+    /* Sidebar radio spacing */
+    .stRadio > div {
+        gap: 0.4rem;
+    }
+    .stRadio label {
+        border-radius: 12px;
+        padding: 6px 10px;
     }
 
     /* ------------------------------------------------------
-       GENERIC CARDS (White + Shadow)
+       GENERIC CARDS
     -------------------------------------------------------*/
     .app-card {
         background: #FFFFFF !important;
-        border-radius: 18px;
-        padding: 18px 22px;
+        border-radius: 20px;
+        padding: 20px 22px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
         border: 1px solid #E5E7EB;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         margin-bottom: 18px;
     }
 
-    /* Soft gradient card */
     .app-card-soft {
         background: linear-gradient(135deg, #FFF7F3, #F3F7FF) !important;
-        border-radius: 22px;
+        border-radius: 24px;
         padding: 26px 30px;
-        box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
         border: 1px solid #E5E7EB;
         margin-bottom: 18px;
     }
 
-    /* Metrics text */
     .metric-value {
         font-size: 30px;
         font-weight: 700;
@@ -101,14 +106,14 @@ def inject_global_css():
     hr {
         border: none;
         border-top: 1px solid #D1D5DB;
-        margin: 16px 0;
+        margin: 20px 0;
     }
 
     /* ------------------------------------------------------
-       PLOTLY DARK OVERRIDE FIX (force white background)
+       PLOTLY BACKGROUND FIX
     -------------------------------------------------------*/
-    .js-plotly-plot .plotly, 
-    .plot-container, 
+    .js-plotly-plot .plotly,
+    .plot-container,
     svg {
         background-color: #FFFFFF !important;
     }
@@ -116,57 +121,43 @@ def inject_global_css():
     </style>
     """, unsafe_allow_html=True)
 
+
 def force_light_mode_widgets():
+    """Force Streamlit widgets & dataframes into light mode."""
     st.markdown("""
     <style>
-
-    /* -------------------------------
-       STREAMLIT WIDGET FIX (LIGHT MODE)
-    --------------------------------*/
-    /* Selectbox, multiselect, text-input */
+    /* Selectbox, text inputs, number inputs */
     div[data-baseweb="select"],
     .stTextInput input,
     .stNumberInput input {
         background-color: #FFFFFF !important;
-        color: #000 !important;
+        color: #000000 !important;
         border: 1px solid #D1D5DB !important;
         border-radius: 8px !important;
     }
 
-    /* Dropdown menu */
     ul[role="listbox"] {
-        background: white !important;
-        color: black !important;
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
     }
 
-    /* Sidebar uploader dark fix */
+    /* File uploader in sidebar */
     section[data-testid="stSidebar"] .stFileUploader {
-        background: white !important;
+        background-color: #FFFFFF !important;
         border: 1px solid #D1D5DB !important;
         border-radius: 10px !important;
         padding: 14px;
     }
 
-    /* Tables (dataframe) */
-    .stDataFrame div[data-testid="stHorizontalBlock"] {
-        background: white !important;
-        color: black !important;
-    }
-
+    /* Dataframe background */
+    .stDataFrame div[data-testid="stHorizontalBlock"],
+    .stDataFrame [data-testid="stTable"],
     .stDataFrame table {
-        background: white !important;
-        color: #111 !important;
+        background-color: #FFFFFF !important;
+        color: #111111 !important;
     }
-
-    /* Scroll area for dataframe */
-    .stDataFrame [data-testid="stTable"] {
-        background-color: white !important;
-        color: #111 !important;
-    }
-
     </style>
     """, unsafe_allow_html=True)
-
 
 
 def section_header(title: str, subtitle: str = "", icon: str = "📊"):
@@ -717,8 +708,9 @@ def main():
         page_icon="🐟",
     )
 
-    # ---------- APPLY NEW PASTEL THEME ----------
+    # ---------- APPLY LIGHT THEME ----------
     inject_global_css()
+    force_light_mode_widgets()
 
     #st.title("Fisheries Clustering & Pattern Recognition Dashboard")
 
@@ -987,6 +979,8 @@ def main():
         )
 
         import plotly.graph_objects as go
+        import plotly.io as pio
+        pio.templates.default = 'plotly_white'
         fig = go.Figure()
 
         # Stem lines
