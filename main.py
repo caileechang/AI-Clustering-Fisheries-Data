@@ -115,7 +115,7 @@ def inject_global_css():
 
     </style>
     """, unsafe_allow_html=True)
-    
+
 def force_light_mode_widgets():
     st.markdown("""
     <style>
@@ -1017,7 +1017,7 @@ def main():
         )
 
         fig.update_layout(
-            template="plotly_dark",
+            template="plotly_light",
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             xaxis=dict(
