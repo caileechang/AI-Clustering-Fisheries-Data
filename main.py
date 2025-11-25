@@ -1340,140 +1340,129 @@ def main():
     
       
     elif plot_option == "Optimal K for Monthly & Yearly":
-        st.subheader("Automatic Determination of Optimal K (Freshwater + Marine Composition)")
-    
-        # --- Monthly Composition ---
-        st.markdown("###  Monthly Fish Landing Composition (Freshwater + Marine)")
-    
-        # Prepare monthly totals by summing over states for each month
+
+        # =====================
+        # SECTION HEADER (Card)
+        # =====================
+        st.markdown("""
+        <div class="app-frame" style="margin-top:20px;">
+            <h3 style="margin-bottom:4px;">🔍 Automatic Optimal K (Freshwater + Marine Composition)</h3>
+            <p style="color:#6b7280; margin-top:-4px;">
+                Silhouette & Elbow validation for both monthly and yearly fish landing compositions.
+            </p>
+        """, unsafe_allow_html=True)
+
+        # =====================================================
+        # 1️⃣ MONTHLY COMPOSITION  — CARD BLOCK
+        # =====================================================
+        st.markdown("""
+            <div class="app-frame" style="background:white; margin-top:14px;">
+                <h4 style="margin-bottom:8px;">📅 Monthly Fish Landing Composition (Freshwater + Marine)</h4>
+        """, unsafe_allow_html=True)
+
+        # Prepare monthly data
         monthly_comp = (
             df_land.groupby(['Year', 'Month', 'Type of Fish'])['Fish Landing (Tonnes)']
             .sum()
             .reset_index()
-            .pivot_table(index=['Year', 'Month'], columns='Type of Fish', values='Fish Landing (Tonnes)', aggfunc='sum')
+            .pivot_table(index=['Year', 'Month'], columns='Type of Fish',
+                        values='Fish Landing (Tonnes)', aggfunc='sum')
             .fillna(0)
             .reset_index()
         )
-    
-        # Rename columns for clarity
+
         monthly_comp.columns.name = None
-        monthly_comp.rename(columns={'Freshwater': 'Freshwater (Tonnes)', 'Marine': 'Marine (Tonnes)'}, inplace=True)
-    
-        # Scale based on Freshwater & Marine values
+        monthly_comp.rename(columns={
+            'Freshwater': 'Freshwater (Tonnes)',
+            'Marine': 'Marine (Tonnes)'
+        }, inplace=True)
+
+        # Scale features
         scaled_monthly = StandardScaler().fit_transform(
             monthly_comp[['Freshwater (Tonnes)', 'Marine (Tonnes)']]
         )
-    
+
+        # Silhouette + Elbow
+        colM1, colM2 = st.columns(2)
+        with colM1:
+            st.markdown("<p><b>Silhouette Score vs K</b></p>", unsafe_allow_html=True)
+        with colM2:
+            st.markdown("<p><b>Elbow Method (Inertia) vs K</b></p>", unsafe_allow_html=True)
+
         best_k_monthly, best_sil_monthly, best_inertia_monthly = evaluate_kmeans_k(
-            scaled_monthly, "Monthly Fish Landing (Freshwater + Marine Composition)", use_streamlit=True
+            scaled_monthly,
+            "Monthly Fish Landing (Freshwater + Marine Composition)",
+            use_streamlit=True
         )
-    
-        # --- Yearly Composition ---
-        st.markdown("###  Yearly Fish Landing Composition (Freshwater + Marine)")
-    
+
+        st.success(f"📌 Monthly Best k = {best_k_monthly}  (Silhouette = {best_sil_monthly:.3f})")
+
+        st.markdown("</div>", unsafe_allow_html=True)  # END MONTHLY CARD
+
+        # =====================================================
+        # 2️⃣ YEARLY COMPOSITION  — CARD BLOCK
+        # =====================================================
+        st.markdown("""
+            <div class="app-frame" style="background:white; margin-top:16px;">
+                <h4 style="margin-bottom:8px;">📆 Yearly Fish Landing Composition (Freshwater + Marine)</h4>
+        """, unsafe_allow_html=True)
+
+        # Prepare yearly composition
         yearly_comp = (
             df_land.groupby(['Year', 'Type of Fish'])['Fish Landing (Tonnes)']
             .sum()
             .reset_index()
-            .pivot_table(index='Year', columns='Type of Fish', values='Fish Landing (Tonnes)', aggfunc='sum')
+            .pivot_table(index='Year', columns='Type of Fish',
+                        values='Fish Landing (Tonnes)', aggfunc='sum')
             .fillna(0)
             .reset_index()
         )
-    
+
         yearly_comp.columns.name = None
-        yearly_comp.rename(columns={'Freshwater': 'Freshwater (Tonnes)', 'Marine': 'Marine (Tonnes)'}, inplace=True)
-    
+        yearly_comp.rename(columns={
+            'Freshwater': 'Freshwater (Tonnes)',
+            'Marine': 'Marine (Tonnes)'
+        }, inplace=True)
+
+        # Scale yearly features
         scaled_yearly = StandardScaler().fit_transform(
             yearly_comp[['Freshwater (Tonnes)', 'Marine (Tonnes)']]
         )
-    
+
+        colY1, colY2 = st.columns(2)
+        with colY1:
+            st.markdown("<p><b>Silhouette Score vs K</b></p>", unsafe_allow_html=True)
+        with colY2:
+            st.markdown("<p><b>Elbow Method (Inertia) vs K</b></p>", unsafe_allow_html=True)
+
         best_k_yearly, best_sil_yearly, best_inertia_yearly = evaluate_kmeans_k(
-            scaled_yearly, "Yearly Fish Landing (Freshwater + Marine Composition)", use_streamlit=True
+            scaled_yearly,
+            "Yearly Fish Landing (Freshwater + Marine Composition)",
+            use_streamlit=True
         )
-    
-        # --- 🧾 Summary ---
-        st.markdown("### 🧾 Summary of Optimal K Results (Composition-Based)")
+
+        st.success(f"📌 Yearly Best k = {best_k_yearly}  (Silhouette = {best_sil_yearly:.3f})")
+
+        st.markdown("</div>", unsafe_allow_html=True)  # END YEARLY CARD
+
+        # =====================================================
+        # 3️⃣ SUMMARY CARD (UI #2 Style)
+        # =====================================================
+        st.markdown("""
+            <div class="app-frame" style="background:white; margin-top:18px;">
+                <h4 style="margin-bottom:8px;">🧾 Summary of Optimal K Results</h4>
+        """, unsafe_allow_html=True)
+
         summary = pd.DataFrame({
             "Dataset": ["Monthly (Freshwater + Marine)", "Yearly (Freshwater + Marine)"],
             "Best K": [best_k_monthly, best_k_yearly],
             "Silhouette Score": [f"{best_sil_monthly:.3f}", f"{best_sil_yearly:.3f}"]
         })
-        st.table(summary)
-    
-        # Store for reuse
-        st.session_state['best_k_monthly'] = best_k_monthly
-        st.session_state['best_k_yearly'] = best_k_yearly
 
-    
-        
-    elif plot_option == "2D KMeans Scatter":
- 
-        import matplotlib.pyplot as plt
-        import seaborn as sns
+        st.dataframe(summary, use_container_width=True, height=140)
 
-        st.subheader("Automatic 2D K-Means Clustering")
-
-        # ---------------------------------------------------
-        # STEP 1: PREPARE DATA (Only 2D for this mode)
-        # ---------------------------------------------------
-        features = merged_df[['Total Fish Landing (Tonnes)',
-                            'Total number of fishing vessels']]
-
-        # Safety: drop NaN & convert numeric
-        features = features.apply(pd.to_numeric, errors='coerce').dropna()
-
-        if len(features) < 5:
-            st.error("❌ Not enough valid data for 2D clustering (need ≥ 5 rows).")
-            st.stop()
-
-        scaled = StandardScaler().fit_transform(features)
-
-        # ---------------------------------------------------
-        # STEP 2: FIND BEST k USING SILHOUETTE
-        # ---------------------------------------------------
-        sil_scores = {}
-
-        for k in range(2, min(10, len(features))):
-            try:
-                kmeans = KMeans(n_clusters=k, random_state=42)
-                labels = kmeans.fit_predict(scaled)
-                sil_scores[k] = silhouette_score(scaled, labels)
-            except:
-                sil_scores[k] = -1  # in case silhouette fails
-
-        best_k = max(sil_scores, key=sil_scores.get)
-
-        # ---------------------------------------------------
-        # STEP 3: FIT FINAL MODEL
-        # ---------------------------------------------------
-        final_model = KMeans(n_clusters=best_k, random_state=42)
-        features['Cluster'] = final_model.fit_predict(scaled)
-
-        st.markdown(f"**Optimal k automatically selected:** {best_k}")
-        st.markdown("Selected using highest Silhouette score.")
-
-        # ---------------------------------------------------
-        # STEP 4: 2D SCATTER PLOT (Clean & Modern)
-        # ---------------------------------------------------
-        fig, ax = plt.subplots(figsize=(10, 6))
-
-        sns.scatterplot(
-            data=features,
-            x='Total number of fishing vessels',
-            y='Total Fish Landing (Tonnes)',
-            hue='Cluster',
-            palette='viridis',
-            s=80,
-            ax=ax
-        )
-
-        ax.set_title(f"2D K-Means Clustering (k={best_k})", fontsize=12)
-        ax.set_xlabel("Total number of fishing vessels")
-        ax.set_ylabel("Total Fish Landing (Tonnes)")
-        ax.grid(True, alpha=0.3)
-
-        st.pyplot(fig)
-
+        st.markdown("</div>", unsafe_allow_html=True)  # END SUMMARY CARD
+        st.markdown("</div>", unsafe_allow_html=True)  # END MAIN SECTION
 
 
 
