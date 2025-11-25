@@ -18,6 +18,149 @@ import plotly.express as px
 import plotly.graph_objects as go
 import hdbscan
 
+# =========================
+# GLOBAL UI THEME HELPERS
+# =========================
+
+def inject_global_css():
+    """Apply pastel dashboard theme (background, cards, sidebar)."""
+    st.markdown("""
+    <style>
+    /* ---------- GLOBAL BACKGROUND + FONTS ---------- */
+    html, body, [class*="stApp"] {
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+                     "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left,
+                                    #fde8e8, #e0f7fa, #f4e9ff);
+        background-attachment: fixed;
+    }
+
+    h1, h2, h3, h4 {
+        color: #1f2933;
+        font-weight: 700;
+    }
+
+    /* ---------- MAIN CONTENT WIDTH ---------- */
+    .block-container {
+        padding-top: 1.2rem;
+        padding-bottom: 3rem;
+        max-width: 1180px;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    section[data-testid="stSidebar"] {
+        background: #ffffffdd !important;
+        backdrop-filter: blur(12px);
+        border-right: 1px solid rgba(148, 163, 184, 0.45);
+    }
+    section[data-testid="stSidebar"] > div {
+        padding-top: 1.5rem;
+    }
+
+    /* Sidebar radio spacing */
+    .stRadio > div {
+        gap: 0.4rem;
+    }
+    .stRadio label {
+        border-radius: 12px;
+        padding: 6px 10px;
+    }
+
+    /* ---------- GENERIC CARDS ---------- */
+    .app-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 20px 22px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        margin-bottom: 18px;
+    }
+
+    .app-card-soft {
+        background: linear-gradient(135deg, #ffe5ec, #fff7e6);
+        border-radius: 24px;
+        padding: 26px 30px;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.18);
+        border: none;
+        margin-bottom: 18px;
+    }
+
+    .metric-value {
+        font-size: 30px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .metric-label {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    /* ---------- HR LINE ---------- */
+    hr {
+        border: none;
+        border-top: 1px solid rgba(209,213,219,0.8);
+        margin: 20px 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def section_header(title: str, subtitle: str = "", icon: str = "📊"):
+    st.markdown(f"""
+    <div style="margin-bottom: 10px;">
+        <h2 style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span>{icon}</span>
+            <span>{title}</span>
+        </h2>
+        <p style="color:#6b7280; margin-top:0;">{subtitle}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def metric_card(label: str, value, badge: str = "", accent: str = "#f97316"):
+    badge_html = (
+        f"<span style='font-size:13px; padding:4px 8px; border-radius:999px; "
+        f"background:{accent}1a; color:{accent};'>{badge}</span>" if badge else ""
+    )
+    st.markdown(f"""
+    <div class="app-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+                <div class="metric-label">{label}</div>
+                <div class="metric-value">{value}</div>
+            </div>
+            {badge_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def hero_welcome(latest_year: int | None = None):
+    """Top pastel welcome banner similar to the reference UI."""
+    year_text = (
+        f"Latest data year: {latest_year}"
+        if latest_year is not None
+        else "Explore fish landings & vessels over time."
+    )
+    st.markdown(f"""
+    <div class="app-card-soft"
+         style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <p style="text-transform:uppercase; letter-spacing:0.08em;
+                      color:#f97316; font-size:12px; margin-bottom:6px;">
+                Fisheries Analytics Dashboard
+            </p>
+            <h1 style="margin:0 0 6px 0; font-size:30px;">Welcome, Analyst</h1>
+            <p style="margin:0; color:#4b5563; font-size:14px;">{year_text}</p>
+        </div>
+        <div>
+            <!-- you can replace this with any illustration URL you like -->
+            <img src="https://illustrations.popsy.co/white/fishing-boat.svg"
+                 width="190">
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -504,65 +647,15 @@ def main():
     
    
     st.set_page_config(layout='wide')
-     # ======================================
-    # GLOBAL PREMIUM CSS (NEUMORPHISM + ANIMATION)
-    # ======================================
-    st.markdown("""
-    <style>
+     # ---------- PAGE CONFIG ----------
+    st.set_page_config(
+        layout='wide',
+        page_title="Fisheries Clustering & Pattern Recognition Dashboard",
+        page_icon="🐟",
+    )
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(12px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .neu-card {
-        background: #1b1b1b;
-        border-radius: 24px;
-        padding: 28px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(255,255,255,0.06);
-
-        /* NEUMORPHISM SHADOW */
-        box-shadow:
-            9px 9px 20px rgba(0,0,0,0.55),
-            -9px -9px 20px rgba(255,255,255,0.04);
-
-        animation: fadeIn 0.55s ease-out;
-        transition: all 0.25s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* HOVER EFFECT */
-    .neu-card:hover {
-        transform: translateY(-6px);
-        box-shadow:
-            12px 12px 28px rgba(0,0,0,0.65),
-            -12px -12px 28px rgba(255,255,255,0.06);
-    }
-
-    /* SHIMMER HIGHLIGHT */
-    .shimmer {
-        background: linear-gradient(
-            90deg,
-            rgba(255,255,255,0) 0%,
-            rgba(255,255,255,0.15) 50%,
-            rgba(255,255,255,0) 100%
-        );
-        position: absolute;
-        top:0; left:0;
-        height:100%; width:100%;
-        transform: translateX(-100%);
-        animation: shimmerMove 2.7s infinite;
-    }
-
-    @keyframes shimmerMove {
-        0%   { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
+    # ---------- APPLY NEW PASTEL THEME ----------
+    inject_global_css()
 
     #st.title("Fisheries Clustering & Pattern Recognition Dashboard")
 
