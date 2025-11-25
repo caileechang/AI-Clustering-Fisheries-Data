@@ -1,0 +1,12 @@
+pandas
+streamlit
+kneed
+scikit-learn
+matplotlib
+seaborn
+openpyxl
+folium
+streamlit-folium
+plotly
+streamlit-js-eval
+hdbscan
