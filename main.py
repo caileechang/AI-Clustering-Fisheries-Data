@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import calendar
-import matplotlib.pyplot as plt
+
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans, DBSCAN
