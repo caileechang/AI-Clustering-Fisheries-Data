@@ -28,10 +28,12 @@ def inject_global_css():
     <style>
     /* ---------- GLOBAL BACKGROUND + FONTS ---------- */
     html, body, [class*="stApp"] {
-        background: linear-gradient(135deg, #f0f4f9 0%, #d9e2ec 40%, #bcccdc 100%);
-        background-attachment: fixed;
-    }
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", sans-serif;
 
+    background: linear-gradient(135deg, #f0f4f9 0%, #d9e2ec 40%, #bcccdc 100%);
+    background-attachment: fixed;
+    }
 
     h1, h2, h3, h4 {
         color: #1f2933;
