@@ -1017,7 +1017,7 @@ def main():
         )
 
         fig.update_layout(
-            template="plotly_light",
+            template="plotly_white",
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             xaxis=dict(
