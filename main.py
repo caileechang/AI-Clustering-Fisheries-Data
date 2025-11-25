@@ -1,22 +1,4 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import calendar
 
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans, DBSCAN
-from sklearn.metrics import silhouette_score
-import folium
-from streamlit_folium import st_folium
-import re
-from sklearn.neighbors import NearestNeighbors
-from kneed import KneeLocator
-from difflib import get_close_matches
-import time
-import plotly.express as px
-import plotly.graph_objects as go
-import hdbscan
 
 
 
