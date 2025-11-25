@@ -31,7 +31,8 @@ def inject_global_css():
     font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
                  "Segoe UI", sans-serif;
 
-    background: linear-gradient(135deg, #f0f4f9 0%, #d9e2ec 40%, #bcccdc 100%);
+    background: linear-gradient(135deg, #1e1f22 0%, #2b2d31 100%);
+
     background-attachment: fixed;
     }
 
