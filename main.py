@@ -115,6 +115,57 @@ def inject_global_css():
 
     </style>
     """, unsafe_allow_html=True)
+    
+def force_light_mode_widgets():
+    st.markdown("""
+    <style>
+
+    /* -------------------------------
+       STREAMLIT WIDGET FIX (LIGHT MODE)
+    --------------------------------*/
+    /* Selectbox, multiselect, text-input */
+    div[data-baseweb="select"],
+    .stTextInput input,
+    .stNumberInput input {
+        background-color: #FFFFFF !important;
+        color: #000 !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 8px !important;
+    }
+
+    /* Dropdown menu */
+    ul[role="listbox"] {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Sidebar uploader dark fix */
+    section[data-testid="stSidebar"] .stFileUploader {
+        background: white !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 10px !important;
+        padding: 14px;
+    }
+
+    /* Tables (dataframe) */
+    .stDataFrame div[data-testid="stHorizontalBlock"] {
+        background: white !important;
+        color: black !important;
+    }
+
+    .stDataFrame table {
+        background: white !important;
+        color: #111 !important;
+    }
+
+    /* Scroll area for dataframe */
+    .stDataFrame [data-testid="stTable"] {
+        background-color: white !important;
+        color: #111 !important;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
 
 
 
